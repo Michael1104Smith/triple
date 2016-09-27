@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link href="css/style.css" rel="stylesheet">
+<body>
+	<div class="tooltip">
+<!--         <img class="callout" src="img/callout.gif" /> -->
+        <strong>Information</strong><br />
+		<div class="market_value_div">
+			<label>Market Value:</label>
+			<label class="market_value tooltip_value"></label>
+		</div>
+		<div class="book_basis_div">
+			<label>Book Basis:</label>
+			<label class="book_basis tooltip_value"></label>
+		</div>
+		<div class="tax_basis_div">
+			<label>Tax Basis:</label>
+			<label class="tax_basis tooltip_value"></label>
+		</div>
+		<div class="quantity_div">
+			<label>Quantity:</label>
+			<label class="quantity tooltip_value"></label>
+		</div>
+	</div>
+	<div class="container">
+		<div style="text-align:center;">
+			<h1 class="PresentChartType"></h1>
+		</div>
+    	<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="svg">
+    		<g id="barchart" transform="translate(0,0)"></g>
+    		<g id="verticallinechart"></g>
+    		<g id="horizontallinechart"></g>
+    		<g id="boxchart"></g>
+    		<g id="axischart"></g>
+    		<g id="groupchart"></g>
+    		<g id="legendrect"></g>
+    		<g id="legendtext"></g>
+    	</svg>
+	</div>
+	<div class="book_basis_color"></div>
+	<div class="tax_basis_color"></div>
+	<div class="market_value_color"></div>
+</body>
+<script src="js/d3.min.js"></script>
+<script src="js/jquery-git2.min.js"></script>
+<script>
+
+// Const Values Start
+ 
+	var rect_max_height = 30;
+	var start_pos_y = 30;
+	var rect_max_width = 500;
+	var end_bottom = 100;
+	var outline_box_width = 120;
+	var RectPaddingTop = 50;
+	var Book_Basis_Color;
+	var Tax_Basis_Color;
+	var Market_Value_Color;
+	var tooltipLeftMargin = 10;
+	var tooltipTopMargin = -20;
+	var durationTime = 300; // ms
+	var tooltipWidth  = 180;
+	var containerWidth = 1000;
+	var legendHeight = 150;
+
+// Const Values End
+
+
+	var data;
+	var selector_level = 0;
+	var selectorNames = ["Asset","",""];
+	var ClassNames = ["top_charts","second_charts","third_charts"];
+	var max_top_x = 0;
+	var max_second_x = 0;
+	var max_third_x = 0;
+
+	var top_names = [];
+	var second_names = [];
+	var third_names = [];
+
+	var rect_data = [];
+	var vertical_line_data = [];
+	var horizontal_line_data = [];
+	var box_data = [];
+	var group_data = [];
+	var axis_data = [];
+	var legend_rect = [];
+	var legend_text = [];
+	var Value_Colors = [];
+	var Values_Text = ["Book Basis","Tax Basis","Market Value"];
+
+	function type(d) {
+	  d["value"] = +d["value"]; // coerce to number
+	  return d;
+	}
+
+	function numberWithCommas(x) {
+	    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	}
+
+	$(document).ready(function(){
+	// Get Vaues from CSS (start)
+	
+		Book_Basis_Color = $('.book_basis_color').css("background-color");
+		Tax_Basis_Color = $('.tax_basis_color').css("background-color");
+		Market_Value_Color = $('.market_value_color').css("background-color");
+		Value_Colors.push(Book_Basis_Color);
+		Value_Colors.push(Tax_Basis_Color);
+		Value_Colors.push(Market_Value_Color);
+
+		tooltipWidth = parseInt($(".tooltip").css("width"));
+		containerWidth = parseInt($(".container").css("width"));
+
+	// Get Vaues from CSS (end)
+
+		$('.PresentChartType').html(selectorNames[selector_level]);
+
+		d3.csv("data/data.csv", function(csv_data) {
+			data = csv_data;
+			getTopNames();
+			getSecuriyNames();
+			getLotNames();
+			get_max_top_x();
+			top_charts(1,1);
+		});
+
+		$('.PresentChartType').click(function(){
+			if(selector_level == 0){
+				top_charts(1,1);
+			}else if(selector_level == 1){
+				second_charts(selectorNames[selector_level],1,1);
+			}else if(selector_level == 2){
+				third_charts(selectorNames[selector_level-1],selectorNames[selector_level],1,1);
+			}
+		})
+		$('body').on("mouseover",function(e){
+			var obj = $(e.target);
+			if(obj.closest('.bar').length){
+				$('.tooltip').css("display","block");
+			}
+		})
+		$('body').on("mouseout",function(e){
+			var obj = $(e.target);
+			if(obj.closest('.bar').length){
+				$('.tooltip').css("display","none");
+			}
+		})
+		$('body').on("click",function(e){
+			var obj = $(e.target);
+			if(obj.closest('#svg').length){
+				if(!obj.closest('.box').length && !obj.closest('.bar').length && !obj.closest('.group').length){
+					if(selector_level > 0){
+						console.log("asdf");
+						selector_level--;
+						$('.PresentChartType').html(selectorNames[selector_level]);
+						if(selector_level == 0){
+							top_charts(1,1);
+						}else if(selector_level == 1){
+							second_charts(selectorNames[selector_level],1,1);
+						}else if(selector_level == 2){
+							third_charts(selectorNames[selector_level-1],selectorNames[selector_level],1,1);
+						}
+					}
+				}
+			}
+		})
+	});
+</script>
+<script src="js/topCharts.js"></script>
+<script src="js/secondCharts.js"></script>
+<script src="js/thirdCharts.js"></script>
+<script src="js/drawCharts.js"></script>

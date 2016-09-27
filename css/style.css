@@ -1,0 +1,68 @@
+.book_basis_color{
+	background-color:#00b050;
+}
+.tax_basis_color{
+	background-color:#c4d79b;
+}
+.market_value_color{
+	background-color:#92d050;
+}
+.PrevChartType{
+	cursor:pointer;
+	position:absolute;
+}
+.PresentChartType{
+	display: inline-block;
+	cursor: pointer;
+}
+
+.container{
+	width:1000px;
+	margin:0 auto;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.tooltip {
+	position:absolute;
+	display:none;
+    color:#111;
+    border:1px solid #DCA; background:#fffAF0;
+    z-index:10;
+    padding:14px 20px;
+    width:180px; 
+    line-height:16px;
+    padding-top:5px;
+    border-radius:4px;
+    box-shadow: 5px 5px 8px #CCC;
+}
+
+.tooltip strong {
+	line-height:30px;
+    text-decoration: underline;
+}
+
+.callout {
+	z-index:20;
+	position:absolute;
+	top:30px;
+	border:0;
+	left:-12px;
+}
+
+.tooltip .tooltip_value{
+	float:right;
+}
+#svg{
+	cursor: pointer;
+	width:1000px;
+}
